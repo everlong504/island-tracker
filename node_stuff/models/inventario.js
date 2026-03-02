@@ -17,7 +17,7 @@ CREATE TABLE public.inventario (
 */
 
 
-const Inventario = sequelize.define('Inventario', {
+const Inventario = sequelize.define('inventario', {
     id_inventario: {
         type: DataTypes.INTEGER,
         primaryKey: true,
