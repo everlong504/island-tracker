@@ -1,42 +1,39 @@
-const https = require('https')
-const port = 3000
-
-// Import required modules
 const express = require('express');
-const { Pool } = require('pg');
-const path = require('path');
-const bodyParser = require('body-parser');
+
+const sequelize = require('./node_stuff/models/index.js');
+const User = require('./node_stuff/models/user.js');
+const userRoutes = require('./node_stuff/routes/userroutes.js');
 
 const app = express();
+app.use(express.json());
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'postgres',
-    password: 'denis123', // Change to your password
-    port: 5432, // Default Port
-});
 
-app.use(express.static(path.join('')));
+app.use('/api', userRoutes);
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../progra-movil/pagina_Web', 'index.html'));
+    res.send('Hello World!');
 });
 
-app.get('/inventario', (req, res) => {
-    const query = 'SELECT * FROM inventario;';
+// Example route to create a user
+app.post('/users', async (req, res) => {
+    try {
+        const user = await User.create(req.body);
+        res.status(201).json(user);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
-    pool.query(query, (error, result) => {
-        if (error) {
-            console.error('Error occurred:', error);
-            res.status(500).send('An error occurred while retrieving data from the database.');
-        } else {
-            const invent = result.rows;
-            res.json(invent);
-        }
+// Sync database and start server
+const PORT = process.env.PORT || 3000;
+
+sequelize.sync({ force: false }) // set force: true to drop tables on each restart
+    .then(() => {
+        console.log('Database synced');
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    })
+    .catch(err => {
+        console.error('Unable to connect to database:', err);
     });
-});
-
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-});
