@@ -1,9 +1,12 @@
-const User = require('../models/user');
+//El require es un "*Model", el nombre de la variable es *
+
+
+const UserModel = require('../models/user');
 
 exports.crearUsuario = async (req, res) => {
     try {
-        const user = await User.create(req.body);
-        res.status(201).json(user);
+        const User = await UserModel.create(req.body);
+        res.status(201).json(User);
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             return res.status(400).json({ error: error.errors.map(e => e.message) });
@@ -17,8 +20,8 @@ exports.crearUsuario = async (req, res) => {
 
 exports.mostrarTodo = async (req, res) => {
     try {
-        const users = await User.findAll();
-        res.json(users);
+        const User = await UserModel.findAll();
+        res.json(User);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -26,11 +29,11 @@ exports.mostrarTodo = async (req, res) => {
 
 exports.buscarUsuario = async (req, res) => {
     try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
+        const User = await UserModel.findByPk(req.params.id);
+        if (!User) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
-        res.json(user);
+        res.json(User);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -38,12 +41,12 @@ exports.buscarUsuario = async (req, res) => {
 
 exports.cambiarUsuario = async (req, res) => {
     try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
+        const User = await UserModel.findByPk(req.params.id);
+        if (!User) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
-        await user.update(req.body);
-        res.json(user);
+        await User.update(req.body);
+        res.json(User);
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             return res.status(400).json({ error: error.errors.map(e => e.message) });
@@ -54,11 +57,11 @@ exports.cambiarUsuario = async (req, res) => {
 
 exports.borrarUsuario = async (req, res) => {
     try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
+        const User = await UserModel.findByPk(req.params.id);
+        if (!User) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
-        await user.destroy();
+        await User.destroy();
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ error: error.message });

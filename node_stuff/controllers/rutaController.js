@@ -1,8 +1,9 @@
-const Ruta = require('../models/ruta');
+//El require es un "*Model", el nombre de la variable es *
+const RutaModel = require('../models/ruta');
 
 exports.crearRuta = async (req, res) => {
     try {
-        const Ruta = await Ruta.create(req.body);
+        const Ruta = await RutaModel.create(req.body);
         res.status(201).json(Ruta);
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
@@ -14,8 +15,8 @@ exports.crearRuta = async (req, res) => {
 
 exports.mostrarTodo = async (req, res) => {
     try {
-        const Rutas = await Ruta.findAll();
-        res.json(Rutas);
+        const Ruta = await RutaModel.findAll();
+        res.json(Ruta);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -23,7 +24,7 @@ exports.mostrarTodo = async (req, res) => {
 
 exports.buscarRuta = async (req, res) => {
     try {
-        const Ruta = await Ruta.findByPk(req.params.id);
+        const Ruta = await RutaModel.findByPk(req.params.id);
         if (!Ruta) {
             return res.status(404).json({ error: 'Ruta no encontrado' });
         }
@@ -35,7 +36,7 @@ exports.buscarRuta = async (req, res) => {
 
 exports.cambiarRuta = async (req, res) => {
     try {
-        const Ruta = await Ruta.findByPk(req.params.id);
+        const Ruta = await RutaModel.findByPk(req.params.id);
         if (!Ruta) {
             return res.status(404).json({ error: 'Ruta no encontrado' });
         }
@@ -51,7 +52,7 @@ exports.cambiarRuta = async (req, res) => {
 
 exports.borrarRuta = async (req, res) => {
     try {
-        const Ruta = await Ruta.findByPk(req.params.id);
+        const Ruta = await RutaModel.findByPk(req.params.id);
         if (!Ruta) {
             return res.status(404).json({ error: 'Ruta no encontrado' });
         }
