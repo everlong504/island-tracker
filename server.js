@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+
 
 const sequelize = require('./node_stuff/models/index.js');
 const User = require('./node_stuff/models/user.js');
@@ -13,6 +15,8 @@ const rutaRoutes = require('./node_stuff/routes/rutaRoutes.js');
 
 const app = express();
 app.use(express.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(express.static(path.join(__dirname, 'pagina_Web')));
 
 
 app.use('/api', userRoutes);
@@ -20,9 +24,11 @@ app.use('/api', inventarioRoutes);
 app.use('/api', rutaRoutes);
 
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+app.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname, '/pagina_Web/index.html'));
 });
+
+
 
 
 // Sync database and start server
