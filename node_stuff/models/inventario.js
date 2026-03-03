@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('./index.js');
+const { Model } = require('sequelize');
+
 
 /*
 CREATE TABLE public.inventario (
@@ -12,16 +14,22 @@ CREATE TABLE public.inventario (
     telefono character varying(8),
     contacto text,
     id_ruta integer
+    IMAGEN TAMBIEN
 );
 
 */
 
+class Inventario extends Model {
 
-const Inventario = sequelize.define('Inventario', {
+}
+
+Inventario.init({
     id_inventario: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
+        autoIncrement: true,
+
     },
     nombre: {
         type: DataTypes.STRING,
@@ -54,7 +62,16 @@ const Inventario = sequelize.define('Inventario', {
     id_ruta: {
         type: DataTypes.INTEGER,
         allowNull: false,
+    },
+    imagen: {
+        type: DataTypes.STRING,
     }
-});
+},
+
+    {
+        sequelize,
+        modelName: 'Ruta',
+    })
+
 
 module.exports = Inventario;

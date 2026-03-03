@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const { Model } = require('sequelize');
 const sequelize = require('./index.js');
 
 /*
@@ -10,12 +11,17 @@ CREATE TABLE public.ruta (
 
 */
 
+class Ruta extends Model {
 
-const Ruta = sequelize.define('Ruta', {
+}
+
+Ruta.init({
     id_ruta: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
+        autoIncrement: true,
+
     },
     direccion: {
         type: DataTypes.STRING,
@@ -25,6 +31,9 @@ const Ruta = sequelize.define('Ruta', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-});
+}, {
+    sequelize,
+    modelName: 'Ruta',
+})
 
 module.exports = Ruta;

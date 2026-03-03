@@ -17,7 +17,7 @@ const sequelize = new Sequelize(
         dialect: 'postgres',
         logging: false,
         define: {
-            timestamps: false,       // ← disable createdAt/updatedAt
+            timestamps: false,
             freezeTableName: true,
         },
     }
