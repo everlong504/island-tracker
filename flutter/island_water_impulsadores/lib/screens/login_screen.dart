@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
@@ -46,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             TextFormField(
               controller: _passController,
+              obscureText: _obscureText,
               decoration: const InputDecoration(
                 labelText: 'Contraseña',
                 hintText: 'Ingrese su contraseña',
