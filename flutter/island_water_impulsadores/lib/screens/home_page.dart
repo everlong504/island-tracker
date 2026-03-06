@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,6 +8,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +30,18 @@ class _HomePageState extends State<HomePage> {
             children: [
               Image(image: AssetImage('assets/transparentlogo.png')),
               const SizedBox(height: 64),
+              TextFormField(
+                autocorrect: true,
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  hintText: 'Buscar impulsadores',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 64),
             ],
           ),
         ),
@@ -37,4 +49,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
->>>>>>> Stashed changes
