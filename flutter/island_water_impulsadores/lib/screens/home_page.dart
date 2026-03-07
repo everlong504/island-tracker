@@ -29,8 +29,6 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(28.0),
           child: Column(
             children: [
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
               Image(image: AssetImage('assets/transparentlogo.png')),
               const SizedBox(height: 64),
               TextFormField(
@@ -44,10 +42,7 @@ class _HomePageState extends State<HomePage> {
                   fillColor: Colors.white,
                 ),
               ),
-              const SizedBox(height: 64),
-=======
-=======
->>>>>>> Stashed changes
+
               const SizedBox(height: 64),
               Image(
                 image: AssetImage('assets/transparentlogo.png'),
@@ -92,10 +87,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
             ],
           ),
         ),
