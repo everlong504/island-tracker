@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rutas</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+    <!-- Tabulator CSS -->
+    <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css" rel="stylesheet">
+
+    <!-- Tabulator JS -->
+    <script src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
+</head>
+
+<body>
+    <!-- Barra de navegacion -->
+    <nav class="navbar navbar-custom navbar-dark">
+        <div class="d-flex align-items-center w-100 justify-content-between">
+            <button class="btn btn-link text-white d-md-none" id="sidebarToggle">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+
+            <h5 class="mb-0 text-white d-none d-md-block">
+                <img src="../images/transparentlogo.png" style="width: 180px;">
+            </h5>
+
+            <div class="sidebar-menu">
+                <a href="login.html">
+                    <i class="bi bi-people"></i>
+                    <span>Salir de sesion</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="card mx-auto" style="width: 60rem; top: 1rem; padding: 20px">
+        <h3 id="title">Rutas</h3>
+        <div id="myTable"></div>
+        <div id="loadingLabel">Loading...</div>
+        <button class="btn btn-sm btn-primary create-btn" id="botonCrear" style="width: 5rem">Crear</button>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div id="crudModal">
+        <h3 id="modalTitle">Modificar rutas</h3>
+        <form id="userForm">
+            <input type="hidden" id="crudRutaId">
+
+            <div class="mb-3">
+                <label class="form-label">Direccion</label>
+                <input type="text" id="direccion" placeholder="Direccion" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Vendedor</label>
+                <input type="text" id="vendedor" placeholder="Vendedor" required>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" id="crudConfirmarBtn" class="btn">Save</button>
+                <button type="button" id="crudCancelarBtn" class="btn">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="deleteModal">
+        <h3 id="modalTitle">Borrar este elemento?</h3>
+        <form id="userForm">
+            <input type="hidden" id="deleteRutaId">
+
+            <div class="modal-footer">
+                <button type="button" id="deleteConfirmarBtn" class="btn">Confirmar</button>
+                <button type="button" id="deleteCancelarBtn" class="btn">Cancelar</button>
+            </div>
+
+            <b id="keyError">Esta ruta esta siendo usada en un elemento del <i>Inventario</i></b>
+        </form>
+    </div>
+
+
+    <!-- Bootstrap-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+
+
+    <div id="modal-backdrop"></div>
+
+    <script>
+        var table;
+        var state;
+
+        $(document).ready(function () {
+            table = new Tabulator("#myTable", {
+                ajaxURL: "/api/ruta",
+
+                pagination: "local",
+                paginationSize: 10,
+                layout: "fitColumns",
+                initialSort: [
+                    { column: "id_ruta", dir: "asc" },
+                ],
+                columns: [
+                    { title: "ID", field: "id_ruta", width: 70 },
+                    { title: "Dirección", field: "direccion", sorter: "string" },
+                    { title: "Vendedor", field: "vendedor", sorter: "string" },
+                    {
+                        title: "Acciones",
+                        field: "actions",
+                        width: 120,
+                        formatter: function () {
+                            return '<button class="btn btn-sm btn-primary edit-btn">Edit</button>' +
+                                '<button class="btn btn-sm btn-primary delete-btn">Delete</button>';
+                        },
+                        cellClick: function (e, cell) {
+                            var rowData = cell.getRow().getData();
+                            if (e.target.classList.contains("edit-btn")) {
+                                state = 'editar';
+                                openCrudModal(rowData);
+                            } else if (e.target.classList.contains("delete-btn")) {
+                                openDeleteModal(rowData);
+                            }
+                        }
+                    }
+                ]
+            });
+
+
+            table.on("dataLoaded", function () {
+                $("#loadingLabel").hide();
+            });
+
+        });
+
+        function openCrudModal(rowData) {
+            $('#crudRutaId').val(state = 'editar' ? rowData.id_ruta : '');
+            $('#direccion').val(state = 'editar' ? rowData.direccion : '');
+            $('#vendedor').val(state = 'editar' ? rowData.vendedor : '');
+            $('#modal-backdrop').show();
+            $('#crudModal').show();
+        }
+
+        function closeCrudModal() {
+            $('#crudRutaId, #direccion, #vendedor').val('');
+            $('#modal-backdrop').hide();
+            $('#crudModal').hide();
+        }
+
+        $('#botonCrear').on('click', function () {
+            state = 'crear';
+            openCrudModal('');
+        });
+
+        $('#deleteModal').on('click', '#deleteConfirmarBtn', function () {
+
+            const id = $('#deleteRutaId').val();
+
+            $.ajax({
+                url: '/api/ruta/' + id,
+                method: 'DELETE',
+                success: function () {
+                    table.replaceData();
+                    $('#modal-backdrop').hide();
+                    $('#deleteModal').hide();
+                    $('#keyError').hide();
+
+                },
+                error: function (xhr, status, error) {
+                    if (error == 'Conflict') {
+                        $('#keyError').show();
+                        return;
+                    }
+                    alert('Delete failed: ' + error);
+                }
+            });
+            if (error != 'Conflict') {
+                $('#modal-backdrop').hide();
+                $('#deleteModal').hide();
+                $('#keyError').hide();
+            }
+        });
+
+        $('#deleteModal').on('click', '#deleteCancelarBtn', function () {
+            $('#crudRutaId').val('');
+            $('#modal-backdrop').hide();
+            $('#deleteModal').hide();
+            $('#keyError').hide();
+        });
+
+        $('#crudModal').on('click', '#crudCancelarBtn', function () {
+            $('#deleteRutaId').val(rowData.id_ruta);
+            $('#modal-backdrop').show();
+            $('#deleteModal').show();
+        });
+
+        $('#crudModal').on('click', '#crudConfirmarBtn', function (e) {
+            e.preventDefault();
+
+            const data = {
+                id_ruta: $('#crudRutaId').val(),
+                direccion: $('#direccion').val(),
+                vendedor: $('#vendedor').val()
+            };
+            const id = data.id_ruta;
+
+            if (state == 'editar') {
+                $.ajax({
+                    url: '/api/ruta/' + id,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function () {
+                        table.replaceData();
+                        $('#crudRutaId, #direccion, #vendedor').val('');
+                        $('#modal-backdrop, #crudModal').hide();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Save failed: ' + error);
+                    }
+                });
+            } else if (state == 'crear') {
+                const createData = {
+                    direccion: $('#direccion').val(),
+                    vendedor: $('#vendedor').val()
+                };
+                $.ajax({
+                    url: '/api/ruta/',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(createData),
+                    success: function () {
+                        table.replaceData();
+                        $('#crudRutaId, #direccion, #vendedor').val('');
+                        $('#modal-backdrop, #crudModal').hide();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Save failed: ' + error);
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

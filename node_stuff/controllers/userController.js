@@ -14,6 +14,7 @@ exports.crearUsuario = async (req, res) => {
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(409).json({ error: 'Este correo ya esta registrado' });
         }
+        console.log(error.message)
         res.status(500).json({ error: 'Error de servidor' });
     }
 };

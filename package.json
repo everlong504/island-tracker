@@ -14,7 +14,8 @@
     "jsonwebtoken": "^9.0.3",
     "nodemon": "^3.1.14",
     "pg": "^8.18.0",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "tabulator-tables": "^6.4.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
