@@ -138,6 +138,7 @@
     <script>
         var table;
         var state;
+        var cerror;
 
         $(document).ready(function () {
             table = new Tabulator("#myTable", {
@@ -187,11 +188,11 @@
         });
 
         function openCrudModal(rowData) {
-            $('#crudUserId').val(state = 'editar' ? rowData.id_users : '');
+            $('#crudUserId').val(state == 'editar' ? rowData.id_users : '');
             console.log(rowData.id_users);
-            $('#email').val(state = 'editar' ? rowData.email : '');
-            $('#permisos').val(state = 'editar' ? rowData.permisos : '');
-            document.getElementById('is_active').checked = (state = 'editar' && rowData.is_active ? true : false);
+            $('#email').val(state == 'editar' ? rowData.email : '');
+            $('#permisos').val(state == 'editar' ? rowData.permisos : '');
+            document.getElementById('is_active').checked = (state == 'editar' && rowData.is_active ? true : false);
             $('#password').val('');
             $('#modal-backdrop').show();
             $('#crudModal').show();
@@ -231,12 +232,13 @@
                 error: function (xhr, status, error) {
                     if (error == 'Conflict') {
                         $('#keyError').show();
+                        cerror = 'Conflict';
                         return;
                     }
                     alert('Delete failed: ' + error);
                 }
             });
-            if (error != 'Conflict') {
+            if (cerror != 'Conflict') {
                 $('#modal-backdrop').hide();
                 $('#deleteModal').hide();
                 $('#keyError').hide();
