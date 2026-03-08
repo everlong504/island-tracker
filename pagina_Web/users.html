@@ -53,19 +53,56 @@
 
     <div class="overlay" id="overlay"></div>
     <div id="crudModal">
-        <h3 id="modalTitle">Modificar rutas</h3>
+        <h3 id="modalTitle">Modificar Usuario</h3>
         <form id="userForm">
-            <input type="hidden" id="crudRutaId">
+            <input type="hidden" id="crudUserId">
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Correo</label>
+                    </div>
 
-            <div class="mb-3">
-                <label class="form-label">Direccion</label>
-                <input type="text" id="direccion" placeholder="Direccion" required>
+                    <div class="mb-3">
+                        <input type="text" id="email" placeholder="email@example.com" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Permisos</label>
+
+                    </div>
+
+                    <div class="mb-3" style="display: flex; justify-content: center;">
+                        <select id="permisos"
+                            style="padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;">
+                            <option value="Conductor">Conductor</option>
+                            <option value="Gerente">Gerente</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-2">
+                        <label class="form-label">Esta activo?</label>
+                    </div>
+                    <div class="mb-3" style="display: flex; justify-content: center;">
+                        <input class="form-check-input" type="checkbox" id="is_active"
+                            style="width: 2rem; height: 2rem;" check="checked">
+                    </div>
+                </div>
+
+                <div class="col-6">
+
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" id="password" placeholder="········" required>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Vendedor</label>
-                <input type="text" id="vendedor" placeholder="Vendedor" required>
-            </div>
 
             <div class="modal-footer">
                 <button type="submit" id="crudConfirmarBtn" class="btn">Save</button>
@@ -75,16 +112,16 @@
     </div>
 
     <div id="deleteModal">
-        <h3 id="modalTitle">Borrar este elemento?</h3>
+        <h3 id="modalTitle">Borrar este usuario?</h3>
         <form id="userForm">
-            <input type="hidden" id="deleteRutaId">
+            <input type="hidden" id="deleteUserId">
 
             <div class="modal-footer">
                 <button type="button" id="deleteConfirmarBtn" class="btn">Confirmar</button>
                 <button type="button" id="deleteCancelarBtn" class="btn">Cancelar</button>
             </div>
 
-            <b id="keyError">Esta ruta esta siendo usada en un elemento del <i>Inventario</i></b>
+            <b id="keyError">Este usuario no puede ser eliminado</b>
         </form>
     </div>
 
@@ -110,13 +147,15 @@
                 paginationSize: 10,
                 layout: "fitColumns",
                 initialSort: [
-                    { column: "id_ruta", dir: "asc" },
+                    { column: "id_users", dir: "asc" },
                 ],
                 columns: [
                     { title: "ID", field: "id_users", width: 70 },
                     { title: "Correo", field: "email", sorter: "string" },
                     { title: "Permisos", field: "permisos", sorter: "string" },
-                    { title: "Esta activo?", field: "is_active", sorter: "string" },
+                    {
+                        title: "Esta activo?", field: "is_active", formatter: "tickCross"
+                    },
                     { title: "Ultima sesion", field: "last_login", sorter: "string" },
 
                     {
@@ -148,15 +187,24 @@
         });
 
         function openCrudModal(rowData) {
-            $('#crudRutaId').val(state = 'editar' ? rowData.id_ruta : '');
-            $('#direccion').val(state = 'editar' ? rowData.direccion : '');
-            $('#vendedor').val(state = 'editar' ? rowData.vendedor : '');
+            $('#crudUserId').val(state = 'editar' ? rowData.id_users : '');
+            console.log(rowData.id_users);
+            $('#email').val(state = 'editar' ? rowData.email : '');
+            $('#permisos').val(state = 'editar' ? rowData.permisos : '');
+            document.getElementById('is_active').checked = (state = 'editar' && rowData.is_active ? true : false);
+            $('#password').val('');
             $('#modal-backdrop').show();
             $('#crudModal').show();
         }
 
+        function openDeleteModal(rowData) {
+            $('#deleteUserId').val(rowData.id_users);
+            $('#modal-backdrop').show();
+            $('#deleteModal').show();
+        }
+
         function closeCrudModal() {
-            $('#crudRutaId, #direccion, #vendedor').val('');
+            $('#crudUserId, #email, #permisos, #is_active, #password').val('');
             $('#modal-backdrop').hide();
             $('#crudModal').hide();
         }
@@ -168,10 +216,10 @@
 
         $('#deleteModal').on('click', '#deleteConfirmarBtn', function () {
 
-            const id = $('#deleteRutaId').val();
+            const id = $('#deleteUserId').val();
 
             $.ajax({
-                url: '/api/ruta/' + id,
+                url: '/api/user/' + id,
                 method: 'DELETE',
                 success: function () {
                     table.replaceData();
@@ -196,38 +244,39 @@
         });
 
         $('#deleteModal').on('click', '#deleteCancelarBtn', function () {
-            $('#crudRutaId').val('');
+            $('#deleteUserId').val('');
             $('#modal-backdrop').hide();
             $('#deleteModal').hide();
             $('#keyError').hide();
         });
 
         $('#crudModal').on('click', '#crudCancelarBtn', function () {
-            $('#deleteRutaId').val(rowData.id_ruta);
-            $('#modal-backdrop').show();
-            $('#deleteModal').show();
+            closeCrudModal();
         });
 
         $('#crudModal').on('click', '#crudConfirmarBtn', function (e) {
             e.preventDefault();
-
             const data = {
-                id_ruta: $('#crudRutaId').val(),
-                direccion: $('#direccion').val(),
-                vendedor: $('#vendedor').val()
+                id_users: $('#crudUserId').val(),
+                email: $('#email').val(),
+                permisos: $('#permisos').val(),
+                is_active: $('#is_active').is(':checked'),
+                password_hash: $('#password').val(),
             };
-            const id = data.id_ruta;
+            const id = data.id_users;
+
+            console.log(data);
+
 
             if (state == 'editar') {
                 $.ajax({
-                    url: '/api/ruta/' + id,
+                    url: '/api/user/' + id,
                     method: 'PUT',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function () {
                         table.replaceData();
-                        $('#crudRutaId, #direccion, #vendedor').val('');
-                        $('#modal-backdrop, #crudModal').hide();
+                        closeCrudModal();
                     },
                     error: function (xhr, status, error) {
                         alert('Save failed: ' + error);
@@ -235,18 +284,22 @@
                 });
             } else if (state == 'crear') {
                 const createData = {
-                    direccion: $('#direccion').val(),
-                    vendedor: $('#vendedor').val()
+                    email: $('#email').val(),
+                    permisos: $('#permisos').val(),
+                    is_active: $('#is_active').is(':checked'),
+                    password_hash: $('#password').val(),
                 };
+
+                console.log(createData);
+
                 $.ajax({
-                    url: '/api/ruta/',
+                    url: '/api/user/',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(createData),
                     success: function () {
                         table.replaceData();
-                        $('#crudRutaId, #direccion, #vendedor').val('');
-                        $('#modal-backdrop, #crudModal').hide();
+                        closeCrudModal();
                     },
                     error: function (xhr, status, error) {
                         alert('Save failed: ' + error);
