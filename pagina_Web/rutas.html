@@ -101,6 +101,7 @@
     <script>
         var table;
         var state;
+        var cerror;
 
         $(document).ready(function () {
             table = new Tabulator("#myTable", {
@@ -145,9 +146,9 @@
         });
 
         function openCrudModal(rowData) {
-            $('#crudRutaId').val(state = 'editar' ? rowData.id_ruta : '');
-            $('#direccion').val(state = 'editar' ? rowData.direccion : '');
-            $('#vendedor').val(state = 'editar' ? rowData.vendedor : '');
+            $('#crudRutaId').val(state == 'editar' ? rowData.id_ruta : '');
+            $('#direccion').val(state == 'editar' ? rowData.direccion : '');
+            $('#vendedor').val(state == 'editar' ? rowData.vendedor : '');
             $('#modal-backdrop').show();
             $('#crudModal').show();
         }
@@ -180,17 +181,24 @@
                 error: function (xhr, status, error) {
                     if (error == 'Conflict') {
                         $('#keyError').show();
+                        cerror = 'Conflict';
                         return;
                     }
                     alert('Delete failed: ' + error);
                 }
             });
-            if (error != 'Conflict') {
+            if (cerror != 'Conflict') {
                 $('#modal-backdrop').hide();
                 $('#deleteModal').hide();
                 $('#keyError').hide();
             }
         });
+
+        function openDeleteModal(rowData) {
+            $('#deleteRutaId').val(rowData.id_ruta);
+            $('#modal-backdrop').show();
+            $('#deleteModal').show();
+        }
 
         $('#deleteModal').on('click', '#deleteCancelarBtn', function () {
             $('#crudRutaId').val('');
@@ -200,9 +208,9 @@
         });
 
         $('#crudModal').on('click', '#crudCancelarBtn', function () {
-            $('#deleteRutaId').val(rowData.id_ruta);
-            $('#modal-backdrop').show();
-            $('#deleteModal').show();
+            $('#crudRutaId, #direccion, #vendedor').val('');
+            $('#modal-backdrop').hide();
+            $('#crudModal').hide();
         });
 
         $('#crudModal').on('click', '#crudConfirmarBtn', function (e) {
