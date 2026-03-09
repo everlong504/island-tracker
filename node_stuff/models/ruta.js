@@ -33,7 +33,7 @@ Ruta.init({
     },
 }, {
     sequelize,
-    modelName: 'Ruta',
+    modelName: 'ruta',
 })
 
 module.exports = Ruta;
