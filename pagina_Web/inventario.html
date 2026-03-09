@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rutas</title>
+    <title>Inventario</title>
     <link rel="stylesheet" href="styles.css">
 
     <!-- Bootstrap-->
@@ -44,8 +44,8 @@
         </div>
     </nav>
 
-    <div class="card mx-auto" style="width: 60rem; top: 1rem; padding: 20px">
-        <h3 id="title">Rutas</h3>
+    <div class="card mx-auto" style="width: 80rem; top: 1rem; padding: 20px">
+        <h3 id="title">Inventario</h3>
         <div id="myTable"></div>
         <div id="loadingLabel">Loading...</div>
         <button class="btn btn-sm btn-primary create-btn" id="botonCrear" style="width: 5rem">Crear</button>
@@ -53,18 +53,65 @@
 
     <div class="overlay" id="overlay"></div>
     <div id="crudModal">
-        <h3 id="modalTitle">Modificar rutas</h3>
+        <h3 id="modalTitle">Modificar inventario</h3>
         <form id="userForm">
-            <input type="hidden" id="crudRutaId">
+            <input type="hidden" id="crudInventarioId">
 
-            <div class="mb-3">
-                <label class="form-label">Direccion</label>
-                <input type="text" id="direccion" placeholder="Direccion" required>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" id="nombre" placeholder="Nombre" required>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Precio</label>
+                        <input type="text" id="precio" placeholder="Precio" required>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Cantidad</label>
+                        <input type="text" id="cantidad" placeholder="Cantidad" required>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Contacto</label>
+                        <input type="text" id="contacto" placeholder="Contacto" required>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Telefono</label>
+                        <input type="text" id="telefono" placeholder="Telefono" required>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">ID Ruta</label>
+                        <input type="text" id="idRuta" placeholder="ID Ruta" required>
+                    </div>
+                </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Vendedor</label>
-                <input type="text" id="vendedor" placeholder="Vendedor" required>
+                <label class="form-label">Imagen</label>
+                <input type="text" id="imagen" placeholder="Imagen" required>
             </div>
 
             <div class="modal-footer">
@@ -77,14 +124,14 @@
     <div id="deleteModal">
         <h3 id="modalTitle">Borrar este elemento?</h3>
         <form id="userForm">
-            <input type="hidden" id="deleteRutaId">
+            <input type="hidden" id="deleteInventarioId">
 
             <div class="modal-footer">
                 <button type="button" id="deleteConfirmarBtn" class="btn">Confirmar</button>
                 <button type="button" id="deleteCancelarBtn" class="btn">Cancelar</button>
             </div>
 
-            <b id="keyError">Esta ruta esta siendo usada en un elemento del <i>Inventario</i></b>
+            <b id="keyError">Este elemento esta siendo usado en otra parte del sistema</b>
         </form>
     </div>
 
@@ -101,25 +148,53 @@
     <script>
         var table;
         var state;
+        var cerror;
+
+        function googleMap(cell, formatterParams, onRendered) {
+            // cell: the cell component
+            const ubicacion = cell.getValue();
+
+            if (!ubicacion || !ubicacion.coordinates) {
+                return "";
+            }
+
+            const coords = ubicacion.coordinates;
+            const lat = coords[1];
+            const lon = coords[0];
+
+            var url = `https://www.google.com/maps?q=${lat},${lon}`;
+            var label = "Ubicacion";
+            return "<a href='" + url + "' target='_blank'>" + label + "</a>";
+        }
+
 
         $(document).ready(function () {
             table = new Tabulator("#myTable", {
-                ajaxURL: "/api/ruta",
+                ajaxURL: "/api/inventario",
 
                 pagination: "local",
                 paginationSize: 10,
-                layout: "fitColumns",
+                layout: "fitData",
                 initialSort: [
-                    { column: "id_ruta", dir: "asc" },
+                    { column: "id_inventario", dir: "asc" },
                 ],
                 columns: [
-                    { title: "ID", field: "id_ruta", width: 70 },
+                    { title: "ID", field: "id_inventario", width: 70 },
+                    { title: "Nombre", field: "nombre", sorter: "string" },
                     { title: "Dirección", field: "direccion", sorter: "string" },
-                    { title: "Vendedor", field: "vendedor", sorter: "string" },
+                    {
+                        title: "Ubicacion", field: "ubicacion", formatter: googleMap,
+                    },
+                    { title: "Precio", field: "precio", sorter: "string" },
+                    { title: "Cantidad", field: "cantidad", sorter: "string" },
+                    { title: "Telefono", field: "telefono", sorter: "string" },
+                    { title: "Contacto", field: "contacto", sorter: "string" },
+                    { title: "ID Ruta", field: "id_ruta", sorter: "string" },
+                    { title: "Imagen", field: "imagen", sorter: "string" },
                     {
                         title: "Acciones",
                         field: "actions",
-                        width: 120,
+                        width: 150,
                         formatter: function () {
                             return '<button class="btn btn-sm btn-primary edit-btn">Edit</button>' +
                                 '<button class="btn btn-sm btn-primary delete-btn">Delete</button>';
@@ -145,15 +220,20 @@
         });
 
         function openCrudModal(rowData) {
-            $('#crudRutaId').val(state = 'editar' ? rowData.id_ruta : '');
-            $('#direccion').val(state = 'editar' ? rowData.direccion : '');
-            $('#vendedor').val(state = 'editar' ? rowData.vendedor : '');
+            $('#crudInventarioId').val(state == 'editar' ? rowData.id_inventario : '');
+            $('#nombre').val(state == 'editar' ? rowData.nombre : '');
+            $('#precio').val(state == 'editar' ? rowData.precio : '');
+            $('#cantidad').val(state == 'editar' ? rowData.cantidad : '');
+            $('#contacto').val(state == 'editar' ? rowData.contacto : '');
+            $('#telefono').val(state == 'editar' ? rowData.telefono : '');
+            $('#idRuta').val(state == 'editar' ? rowData.id_ruta : '');
+            $('#imagen').val(state == 'editar' ? rowData.imagen : '');
             $('#modal-backdrop').show();
             $('#crudModal').show();
         }
 
         function closeCrudModal() {
-            $('#crudRutaId, #direccion, #vendedor').val('');
+            $('#crudInventarioId, #nombre, #precio, #cantidad, #contacto, #telefono, #idRuta, #imagen').val('');
             $('#modal-backdrop').hide();
             $('#crudModal').hide();
         }
@@ -165,10 +245,10 @@
 
         $('#deleteModal').on('click', '#deleteConfirmarBtn', function () {
 
-            const id = $('#deleteRutaId').val();
+            const id = $('#deleteInventarioId').val();
 
             $.ajax({
-                url: '/api/ruta/' + id,
+                url: '/api/inventario/' + id,
                 method: 'DELETE',
                 success: function () {
                     table.replaceData();
@@ -180,50 +260,62 @@
                 error: function (xhr, status, error) {
                     if (error == 'Conflict') {
                         $('#keyError').show();
+                        cerror = 'Conflict';
                         return;
                     }
                     alert('Delete failed: ' + error);
                 }
             });
-            if (error != 'Conflict') {
+            if (cerror != 'Conflict') {
                 $('#modal-backdrop').hide();
                 $('#deleteModal').hide();
                 $('#keyError').hide();
             }
         });
 
+        function openDeleteModal(rowData) {
+            $('#deleteInventarioId').val(rowData.id_inventario);
+            $('#modal-backdrop').show();
+            $('#deleteModal').show();
+        }
+
         $('#deleteModal').on('click', '#deleteCancelarBtn', function () {
-            $('#crudRutaId').val('');
+            $('#crudInventarioId').val('');
             $('#modal-backdrop').hide();
             $('#deleteModal').hide();
             $('#keyError').hide();
         });
 
         $('#crudModal').on('click', '#crudCancelarBtn', function () {
-            $('#deleteRutaId').val(rowData.id_ruta);
-            $('#modal-backdrop').show();
-            $('#deleteModal').show();
+            $('#crudInventarioId, #nombre, #precio, #cantidad, #contacto, #telefono, #idRuta, #imagen').val('');
+            $('#modal-backdrop').hide();
+            $('#crudModal').hide();
         });
 
         $('#crudModal').on('click', '#crudConfirmarBtn', function (e) {
             e.preventDefault();
 
             const data = {
-                id_ruta: $('#crudRutaId').val(),
-                direccion: $('#direccion').val(),
-                vendedor: $('#vendedor').val()
+                id_inventario: $('#crudInventarioId').val(),
+                nombre: $('#nombre').val(),
+                precio: $('#precio').val(),
+                cantidad: $('#cantidad').val(),
+                contacto: $('#contacto').val(),
+                telefono: $('#telefono').val(),
+                id_ruta: $('#idRuta').val(),
+                imagen: $('#imagen').val()
             };
-            const id = data.id_ruta;
+            const id = data.id_inventario;
 
             if (state == 'editar') {
                 $.ajax({
-                    url: '/api/ruta/' + id,
+                    url: '/api/inventario/' + id,
                     method: 'PUT',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function () {
                         table.replaceData();
-                        $('#crudRutaId, #direccion, #vendedor').val('');
+                        $('#crudInventarioId, #nombre, #precio, #cantidad, #contacto, #telefono, #idRuta, #imagen').val('');
                         $('#modal-backdrop, #crudModal').hide();
                     },
                     error: function (xhr, status, error) {
@@ -232,17 +324,22 @@
                 });
             } else if (state == 'crear') {
                 const createData = {
-                    direccion: $('#direccion').val(),
-                    vendedor: $('#vendedor').val()
+                    nombre: $('#nombre').val(),
+                    precio: $('#precio').val(),
+                    cantidad: $('#cantidad').val(),
+                    contacto: $('#contacto').val(),
+                    telefono: $('#telefono').val(),
+                    id_ruta: $('#idRuta').val(),
+                    imagen: $('#imagen').val()
                 };
                 $.ajax({
-                    url: '/api/ruta/',
+                    url: '/api/inventario/',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(createData),
                     success: function () {
                         table.replaceData();
-                        $('#crudRutaId, #direccion, #vendedor').val('');
+                        $('#crudInventarioId, #nombre, #precio, #cantidad, #contacto, #telefono, #idRuta, #imagen').val('');
                         $('#modal-backdrop, #crudModal').hide();
                     },
                     error: function (xhr, status, error) {
