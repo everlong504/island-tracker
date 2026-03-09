@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+    <!-- Tabulator CSS -->
+    <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css" rel="stylesheet">
+
+    <!-- Tabulator JS -->
+    <script src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
+</head>
+
+<body>
+    <!-- Barra de navegacion -->
+    <nav class="navbar navbar-custom navbar-dark">
+        <div class="d-flex align-items-center w-100 justify-content-between">
+            <button class="btn btn-link text-white d-md-none" id="sidebarToggle">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+
+            <h5 class="mb-0 text-white d-none d-md-block">
+                <img src="../images/transparentlogo.png" style="width: 180px;">
+            </h5>
+
+            <div class="sidebar-menu">
+                <a href="login.html">
+                    <i class="bi bi-people"></i>
+                    <span>Salir de sesion</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="card mx-auto" style="width: 60rem; top: 1rem; padding: 20px">
+        <h3 id="title">Usuarios</h3>
+        <div id="myTable"></div>
+        <div id="loadingLabel">Loading...</div>
+        <button class="btn btn-sm btn-primary create-btn" id="botonCrear" style="width: 5rem">Crear</button>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div id="crudModal">
+        <h3 id="modalTitle">Modificar Usuario</h3>
+        <form id="userForm">
+            <input type="hidden" id="crudUserId">
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Correo</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <input type="text" id="email" placeholder="email@example.com" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label">Permisos</label>
+
+                    </div>
+
+                    <div class="mb-3" style="display: flex;">
+                        <select id="permisos"
+                            style="padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px; width: 217px">
+                            <option value="Conductor">Conductor</option>
+                            <option value="Gerente">Gerente</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-2">
+                        <label class="form-label">Esta activo?</label>
+                    </div>
+                    <div class="mb-3" style="display: flex; justify-content: center;">
+                        <input class="form-check-input" type="checkbox" id="is_active"
+                            style="width: 2rem; height: 2rem;" check="checked">
+                    </div>
+                </div>
+
+                <div class="col-6">
+
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" id="password" placeholder="········" required>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="submit" id="crudConfirmarBtn" class="btn">Save</button>
+                <button type="button" id="crudCancelarBtn" class="btn">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="deleteModal">
+        <h3 id="modalTitle">Borrar este usuario?</h3>
+        <form id="userForm">
+            <input type="hidden" id="deleteUserId">
+
+            <div class="modal-footer">
+                <button type="button" id="deleteConfirmarBtn" class="btn">Confirmar</button>
+                <button type="button" id="deleteCancelarBtn" class="btn">Cancelar</button>
+            </div>
+
+            <b id="keyError">Este usuario no puede ser eliminado</b>
+        </form>
+    </div>
+
+
+    <!-- Bootstrap-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+
+
+    <div id="modal-backdrop"></div>
+
+    <script>
+        var table;
+        var state;
+        var cerror;
+
+        $(document).ready(function () {
+            table = new Tabulator("#myTable", {
+                ajaxURL: "/api/user",
+
+                pagination: "local",
+                paginationSize: 10,
+                layout: "fitColumns",
+                initialSort: [
+                    { column: "id_users", dir: "asc" },
+                ],
+                columns: [
+                    { title: "ID", field: "id_users", width: 70 },
+                    { title: "Correo", field: "email", sorter: "string" },
+                    { title: "Permisos", field: "permisos", sorter: "string" },
+                    {
+                        title: "Esta activo?", field: "is_active", formatter: "tickCross"
+                    },
+                    { title: "Ultima sesion", field: "last_login", sorter: "string" },
+
+                    {
+                        title: "Acciones",
+                        field: "actions",
+                        width: 120,
+                        formatter: function () {
+                            return '<button class="btn btn-sm btn-primary edit-btn">Edit</button>' +
+                                '<button class="btn btn-sm btn-primary delete-btn">Delete</button>';
+                        },
+                        cellClick: function (e, cell) {
+                            var rowData = cell.getRow().getData();
+                            if (e.target.classList.contains("edit-btn")) {
+                                state = 'editar';
+                                openCrudModal(rowData);
+                            } else if (e.target.classList.contains("delete-btn")) {
+                                openDeleteModal(rowData);
+                            }
+                        }
+                    }
+                ]
+            });
+
+
+            table.on("dataLoaded", function () {
+                $("#loadingLabel").hide();
+            });
+
+        });
+
+        function openCrudModal(rowData) {
+            $('#crudUserId').val(state == 'editar' ? rowData.id_users : '');
+            console.log(rowData.id_users);
+            $('#email').val(state == 'editar' ? rowData.email : '');
+            $('#permisos').val(state == 'editar' ? rowData.permisos : '');
+            document.getElementById('is_active').checked = (state == 'editar' && rowData.is_active ? true : false);
+            $('#password').val('');
+            $('#modal-backdrop').show();
+            $('#crudModal').show();
+        }
+
+        function openDeleteModal(rowData) {
+            $('#deleteUserId').val(rowData.id_users);
+            $('#modal-backdrop').show();
+            $('#deleteModal').show();
+        }
+
+        function closeCrudModal() {
+            $('#crudUserId, #email, #permisos, #is_active, #password').val('');
+            $('#modal-backdrop').hide();
+            $('#crudModal').hide();
+        }
+
+        $('#botonCrear').on('click', function () {
+            state = 'crear';
+            openCrudModal('');
+        });
+
+        $('#deleteModal').on('click', '#deleteConfirmarBtn', function () {
+
+            const id = $('#deleteUserId').val();
+
+            $.ajax({
+                url: '/api/user/' + id,
+                method: 'DELETE',
+                success: function () {
+                    table.replaceData();
+                    $('#modal-backdrop').hide();
+                    $('#deleteModal').hide();
+                    $('#keyError').hide();
+
+                },
+                error: function (xhr, status, error) {
+                    if (error == 'Conflict') {
+                        $('#keyError').show();
+                        cerror = 'Conflict';
+                        return;
+                    }
+                    alert('Delete failed: ' + error);
+                }
+            });
+            if (cerror != 'Conflict') {
+                $('#modal-backdrop').hide();
+                $('#deleteModal').hide();
+                $('#keyError').hide();
+            }
+        });
+
+        $('#deleteModal').on('click', '#deleteCancelarBtn', function () {
+            $('#deleteUserId').val('');
+            $('#modal-backdrop').hide();
+            $('#deleteModal').hide();
+            $('#keyError').hide();
+        });
+
+        $('#crudModal').on('click', '#crudCancelarBtn', function () {
+            closeCrudModal();
+        });
+
+        $('#crudModal').on('click', '#crudConfirmarBtn', function (e) {
+            e.preventDefault();
+            const data = {
+                id_users: $('#crudUserId').val(),
+                email: $('#email').val(),
+                permisos: $('#permisos').val(),
+                is_active: $('#is_active').is(':checked'),
+                password_hash: $('#password').val(),
+            };
+            const id = data.id_users;
+
+            console.log(data);
+
+
+            if (state == 'editar') {
+                $.ajax({
+                    url: '/api/user/' + id,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function () {
+                        table.replaceData();
+                        closeCrudModal();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Save failed: ' + error);
+                    }
+                });
+            } else if (state == 'crear') {
+                const createData = {
+                    email: $('#email').val(),
+                    permisos: $('#permisos').val(),
+                    is_active: $('#is_active').is(':checked'),
+                    password_hash: $('#password').val(),
+                };
+
+                console.log(createData);
+
+                $.ajax({
+                    url: '/api/user/',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(createData),
+                    success: function () {
+                        table.replaceData();
+                        closeCrudModal();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Save failed: ' + error);
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -70,7 +70,7 @@ Inventario.init({
 
     {
         sequelize,
-        modelName: 'Ruta',
+        modelName: 'inventario',
     })
 
 

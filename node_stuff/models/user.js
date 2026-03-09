@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('./index.js');
 const { Model } = require('sequelize');
-
+const bcrypt = require('bcrypt');
 
 /*
 CREATE TABLE users (
@@ -46,7 +46,7 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            isIn: [['admin', 'conductor', 'gerente']],
+            isIn: [['Admin', 'Conductor', 'Gerente']],
             notEmpty: true
         }
     },
@@ -57,10 +57,23 @@ User.init({
     last_login: {
         type: DataTypes.DATE,
     },
-}, {
-    sequelize,
-    modelName: 'Ruta',
-})
+},
+    {
+        hooks: {
+            beforeCreate: async (user) => {
+                if (user.password_hash) {
+                    user.password_hash = await bcrypt.hash(user.password_hash, 12);
+                }
+            },
+            beforeUpdate: async (user) => {
+                if (user.changed('password')) {
+                    user.password_hash = await bcrypt.hash(user.password_hash, 12);
+                }
+            }
+        },
+        sequelize,
+        modelName: 'users',
+    })
 
 
 module.exports = User;

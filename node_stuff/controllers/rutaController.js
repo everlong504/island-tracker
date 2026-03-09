@@ -59,6 +59,9 @@ exports.borrarRuta = async (req, res) => {
         await Ruta.destroy();
         res.status(204).send();
     } catch (error) {
+        if (error.message == "update or delete on table \"ruta\" violates foreign key constraint \"inventario_id_ruta_fkey\" on table \"inventario\"") {
+            return res.status(409).json({ error: 'La ruta que intenta borrar es usado en el inventario' });
+        }
         res.status(500).json({ error: error.message });
     }
 };
