@@ -1,20 +1,87 @@
 import 'package:flutter/material.dart';
 
-class NuevoImpulsador extends StatefulWidget {
-  const NuevoImpulsador({super.key});
+import 'package:island_water_impulsadores/screens/perfil_screen.dart';
+
+class NuevoExhibidor extends StatefulWidget {
+  const NuevoExhibidor({super.key});
 
   @override
-  State<NuevoImpulsador> createState() => _NuevoImpulsadorState();
+  State<NuevoExhibidor> createState() => _NuevoExhibidorState();
 }
 
-class _NuevoImpulsadorState extends State<NuevoImpulsador> {
+class _NuevoExhibidorState extends State<NuevoExhibidor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nuevo Impulsador')),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text('Contenido de la pantalla de nuevo impulsador'),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            radius: 1.5,
+            colors: [
+              const Color.fromARGB(255, 93, 224, 230),
+              const Color.fromARGB(255, 22, 135, 207),
+            ],
+          ),
+        ),
+
+        child: Padding(
+          padding: const EdgeInsets.all(28.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 64),
+
+              Image(image: AssetImage('assets/transparentlogo.png')),
+
+              const SizedBox(height: 28),
+
+              Card(
+                borderOnForeground: true,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Nombre del Exhibidor',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            IconButton(
+              tooltip: 'Home',
+              icon: const Icon(Icons.home),
+              onPressed: () {},
+              isSelected: true,
+              hoverColor: DefaultSelectionStyle.defaultColor,
+            ),
+
+            IconButton(
+              tooltip: 'Profile',
+              icon: const Icon(Icons.person),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PerfilScreen()),
+                );
+              },
+              isSelected: false,
+              hoverColor: DefaultSelectionStyle.defaultColor,
+            ),
+          ],
+        ),
       ),
     );
   }

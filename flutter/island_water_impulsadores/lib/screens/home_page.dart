@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final _impulsadorController = TextEditingController();
+    final _exhibidorController = TextEditingController();
 
     return Scaffold(
       body: Container(
@@ -38,9 +38,9 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 28),
 
               TextFormField(
-                controller: _impulsadorController,
+                controller: _exhibidorController,
                 decoration: const InputDecoration(
-                  hintText: 'Nombre del impulsador',
+                  hintText: 'Nombre del exhibidor',
                   border: OutlineInputBorder(),
                   filled: true,
                   fillColor: Colors.white,
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NuevoImpulsador(),
+                        builder: (context) => const NuevoExhibidor(),
                       ),
                     );
                   },
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   child: const Text(
-                    'Nuevo Impulsador',
+                    'Nuevo Exhibidor',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
