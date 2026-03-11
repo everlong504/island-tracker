@@ -39,15 +39,17 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            radius: 40,
-                            backgroundImage: AssetImage('assets/pfp.jpg'),
+                            radius: 35,
+                            backgroundImage: NetworkImage(
+                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Yjp29QCvX2NrpJgw9P-9-75pSrHzeGhMSA&s',
+                            ),
+                            backgroundColor: Colors.transparent,
                           ),
+
                           const SizedBox(width: 16),
 
                           Text(
@@ -57,17 +59,91 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ],
                       ),
 
-                      const SizedBox(height: 4),
                       Text(
                         'Tipo de Usuario',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 28),
+
+                      Row(
+                        children: [
+                          Icon(Icons.phone_android, size: 32),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Contactos',
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
 
                       Text(
-                        'Nombre del Usuario',
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        'Info de contactos',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      Row(
+                        children: [
+                          Icon(Icons.edit_document, size: 32),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Biografia',
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      Text(
+                        'Biografia del usuario',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+
+                      const SizedBox(height: 45),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 65,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromARGB(255, 170, 218, 241),
+                          ),
+                          child: const Text(
+                            'Editar',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 21, 70, 77),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 25),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 65,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                          ),
+                          child: const Text(
+                            'Salir de Sesion',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

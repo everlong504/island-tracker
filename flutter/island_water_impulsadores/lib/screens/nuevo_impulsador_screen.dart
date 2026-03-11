@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:island_water_impulsadores/screens/perfil_screen.dart';
+
 class NuevoExhibidor extends StatefulWidget {
   const NuevoExhibidor({super.key});
 
@@ -70,12 +72,10 @@ class _NuevoExhibidorState extends State<NuevoExhibidor> {
               tooltip: 'Profile',
               icon: const Icon(Icons.person),
               onPressed: () {
-                /*
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const PerfilScreen()),
                 );
-                */
               },
               isSelected: false,
               hoverColor: DefaultSelectionStyle.defaultColor,
