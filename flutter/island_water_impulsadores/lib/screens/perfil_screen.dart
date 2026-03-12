@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:island_water_impulsadores/screens/home_page.dart';
+import 'package:island_water_impulsadores/screens/login_screen.dart';
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
@@ -43,9 +44,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
                       Row(
                         children: [
                           CircleAvatar(
-                            radius: 35,
+                            radius: 40,
                             backgroundImage: NetworkImage(
-                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Yjp29QCvX2NrpJgw9P-9-75pSrHzeGhMSA&s',
+                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUjlj8_FcGPmN6bobOC-Pv--Xtat7XlVL3fQ&s',
                             ),
                             backgroundColor: Colors.transparent,
                           ),
@@ -131,7 +132,14 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         width: double.infinity,
                         height: 65,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginScreen(),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                           ),
@@ -174,14 +182,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
             IconButton(
               tooltip: 'Profile',
               icon: const Icon(Icons.person),
-              onPressed: () {
-                /*
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PerfilScreen()),
-                );
-                */
-              },
+              onPressed: () {},
               isSelected: true,
               hoverColor: DefaultSelectionStyle.defaultColor,
             ),
