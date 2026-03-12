@@ -19,7 +19,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
   bool obscurePassword = true;
 
   @override
-  void dispose() {
+  void _dispose() {
     _biografiaUsuarioController.dispose();
     _contactosUsuarioController.dispose();
     _nombreUsuarioController.dispose();
@@ -69,7 +69,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           CircleAvatar(
                             radius: 35,
                             backgroundImage: NetworkImage(
-                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUjlj8_FcGPmN6bobOC-Pv--Xtat7XlVL3fQ&s',
+                              'https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_640.png',
                             ),
                             backgroundColor: Colors.transparent,
                           ),
@@ -87,14 +87,24 @@ class _PerfilScreenState extends State<PerfilScreen> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return Container(
-                                    height: 900,
+                                    height: 700,
                                     color: Colors.white,
-                                    child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         mainAxisSize: MainAxisSize.min,
+
                                         children: <Widget>[
+                                          Text(
+                                            'Edita el Usuario',
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.headlineSmall,
+                                          ),
+
+                                          const SizedBox(height: 16),
                                           TextFormField(
                                             controller:
                                                 _nombreUsuarioController,
@@ -130,6 +140,25 @@ class _PerfilScreenState extends State<PerfilScreen> {
                                               hintText: 'Biografia del Usuario',
                                               alignLabelWithHint: true,
                                               border: OutlineInputBorder(),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 16),
+
+                                          SizedBox(
+                                            width: double.infinity,
+                                            height: 50,
+                                            child: ElevatedButton(
+                                              onPressed: _submitForm,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.blueAccent,
+                                                foregroundColor: Colors.white,
+                                              ),
+                                              child: const Text(
+                                                'Editar',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -202,6 +231,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                                 builder: (context) => const LoginScreen(),
                               ),
                             );
+
+                            _dispose();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
