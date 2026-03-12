@@ -10,7 +10,29 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _nombreUsuarioController = TextEditingController();
+  final _contactosUsuarioController = TextEditingController();
+  final _biografiaUsuarioController = TextEditingController();
+
+  bool obscurePassword = true;
+
   @override
+  void dispose() {
+    _biografiaUsuarioController.dispose();
+    _contactosUsuarioController.dispose();
+    _nombreUsuarioController.dispose();
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Texto Editar')));
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -25,7 +47,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
         ),
 
         child: Padding(
-          padding: const EdgeInsets.all(28.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               const SizedBox(height: 64),
@@ -37,6 +59,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
               Card(
                 borderOnForeground: true,
                 color: Colors.white,
+
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -44,18 +67,79 @@ class _PerfilScreenState extends State<PerfilScreen> {
                       Row(
                         children: [
                           CircleAvatar(
-                            radius: 40,
+                            radius: 35,
                             backgroundImage: NetworkImage(
                               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUjlj8_FcGPmN6bobOC-Pv--Xtat7XlVL3fQ&s',
                             ),
                             backgroundColor: Colors.transparent,
                           ),
 
-                          const SizedBox(width: 16),
+                          const SizedBox(width: 10),
 
                           Text(
-                            'Nombre del Usuario',
+                            'Nombre de Usuario',
                             style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+
+                          IconButton(
+                            onPressed: () {
+                              showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    height: 900,
+                                    color: Colors.white,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          TextFormField(
+                                            controller:
+                                                _nombreUsuarioController,
+                                            decoration: const InputDecoration(
+                                              labelText: 'Nombre',
+                                              hintText: 'Nombre del Usuario',
+                                              alignLabelWithHint: true,
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 16),
+
+                                          TextFormField(
+                                            controller:
+                                                _contactosUsuarioController,
+                                            decoration: const InputDecoration(
+                                              labelText: 'Contacto',
+                                              hintText: 'Contacto del Usuario',
+                                              alignLabelWithHint: true,
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 16),
+
+                                          TextFormField(
+                                            controller:
+                                                _biografiaUsuarioController,
+                                            maxLines: 4,
+                                            decoration: const InputDecoration(
+                                              labelText: 'Biografia',
+                                              hintText: 'Biografia del Usuario',
+                                              alignLabelWithHint: true,
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            icon: Icon(Icons.edit),
                           ),
                         ],
                       ),
@@ -106,27 +190,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
                       ),
 
                       const SizedBox(height: 45),
-
-                      SizedBox(
-                        width: double.infinity,
-                        height: 65,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 170, 218, 241),
-                          ),
-                          child: const Text(
-                            'Editar',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 21, 70, 77),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 25),
 
                       SizedBox(
                         width: double.infinity,
