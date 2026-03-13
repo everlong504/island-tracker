@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon" />
+
 
     <!-- Bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -149,6 +151,7 @@
         var table;
         var state;
         var cerror;
+        const token = localStorage.getItem('token');
 
         function googleMap(cell, formatterParams, onRendered) {
             // cell: the cell component
@@ -171,7 +174,11 @@
         $(document).ready(function () {
             table = new Tabulator("#myTable", {
                 ajaxURL: "/api/inventario",
-
+                ajaxRequestConfig: {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                },
                 pagination: "local",
                 paginationSize: 10,
                 layout: "fitData",
@@ -250,6 +257,9 @@
             $.ajax({
                 url: '/api/inventario/' + id,
                 method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
                 success: function () {
                     table.replaceData();
                     $('#modal-backdrop').hide();
@@ -312,6 +322,9 @@
                     url: '/api/inventario/' + id,
                     method: 'PUT',
                     contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
                     data: JSON.stringify(data),
                     success: function () {
                         table.replaceData();
@@ -336,6 +349,9 @@
                     url: '/api/inventario/',
                     method: 'POST',
                     contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
                     data: JSON.stringify(createData),
                     success: function () {
                         table.replaceData();
