@@ -3,9 +3,10 @@ const path = require('path');
 
 
 const sequelize = require('./node_stuff/models/index.js');
-const userRoutes = require('./node_stuff/routes/userroutes.js');
+const userRoutes = require('./node_stuff/routes/userRoutes.js');
 const inventarioRoutes = require('./node_stuff/routes/inventarioRoutes.js');
 const rutaRoutes = require('./node_stuff/routes/rutaRoutes.js');
+const autorizacionRoutes = require('./node_stuff/routes/autorizacionRoutes.js');
 
 
 const app = express();
@@ -13,10 +14,10 @@ app.use(express.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(express.static(path.join(__dirname, 'pagina_Web')));
 
-
 app.use('/api', userRoutes);
 app.use('/api', inventarioRoutes);
 app.use('/api', rutaRoutes);
+app.use('/api', autorizacionRoutes);
 
 
 app.get('/', function (req, res) {
