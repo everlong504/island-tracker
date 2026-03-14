@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:island_water_impulsadores/screens/home_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,11 +17,61 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _obscureText = true;
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Inicio de Seccion Exitoso')),
+  String _response = 'Press a button to perform an HTTP request.';
+  bool _loading = false;
+
+  bool _isLoading = false;
+  String _snackMessage = '';
+  bool _usuarioformError = false;
+  bool _passformError = false;
+
+  Future<bool> _login() async {
+    setState(() {
+      _isLoading = true;
+      _snackMessage = '';
+    });
+
+    try {
+      final url = Uri.parse('http://127.0.0.1:3000/api/login');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': _usuarioController.text,
+          'password_hash': _passController.text,
+        }),
       );
+
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        if (responseData['success'] == true ||
+            responseData.containsKey('token')) {
+          setState(() {
+            var name = responseData['user']['email'];
+            _snackMessage = 'Buenos dias, $name';
+          });
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        setState(() {
+          if (_usuarioformError == false && _passformError == false) {
+            _snackMessage = responseData['error'];
+          }
+        });
+        return false;
+      }
+    } catch (e) {
+      setState(() {
+        _snackMessage = 'Error de conexion: $e';
+      });
+      return false;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -79,8 +131,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
+                      setState(() {
+                        _usuarioformError = true;
+                      });
                       return 'Por favor ingrese su usuario';
                     }
+                    if (!RegExp(
+                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                    ).hasMatch(value)) {
+                      setState(() {
+                        _usuarioformError = true;
+                      });
+                      return 'Ingrese un correo valido';
+                    }
+                    setState(() {
+                      _usuarioformError = false;
+                    });
                     return null;
                   },
                 ),
@@ -98,9 +164,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     fillColor: Colors.white,
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.isEmpty || value.trim() == '') {
+                      setState(() {
+                        _passformError = true;
+                      });
                       return 'Por favor ingrese su contraseña';
                     }
+                    setState(() {
+                      _passformError = false;
+                    });
                     return null;
                   },
                 ),
@@ -111,25 +183,55 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
-                      _submitForm();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
-                    },
+                    onPressed: _isLoading
+                        ? null
+                        : () async {
+                            if (_formKey.currentState!.validate()) {
+                              bool success = await _login();
+                              if (success && mounted) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const HomePage(),
+                                  ),
+                                );
+                              }
+                            }
+                            if (_snackMessage.isNotEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(_snackMessage)),
+                              );
+                            }
+                          },
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                     ),
                     child: const Text(
-                      'Iniciar Seccion',
+                      'Iniciar Sesión',
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
+
+                /* Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: _loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : SingleChildScrollView(
+                            child: Text(
+                              _response,
+                              style: const TextStyle(fontFamily: 'monospace'),
+                            ),
+                          ),
+                  ),
+                ), */
               ],
             ),
           ),
