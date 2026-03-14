@@ -15,6 +15,7 @@ exports.login = async (req, res) => {
 
 
         const user = await User.findOne({ where: { email } });
+
         if (!user) {
             return res.status(401).json({ error: 'Credenciales invalidas' });
         }
@@ -22,6 +23,10 @@ exports.login = async (req, res) => {
         const validPassword = await bcrypt.compare(password_hash, user.password_hash);
         if (!validPassword) {
             return res.status(401).json({ error: 'Credenciales invalidas' });
+        }
+
+        if (user.is_active == false) {
+            return res.status(401).json({ error: 'Usuario inactivo' });
         }
 
         const token = jwt.sign(
