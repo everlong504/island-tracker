@@ -57,6 +57,9 @@ User.init({
     last_login: {
         type: DataTypes.DATE,
     },
+    nombre: {
+        type: DataTypes.STRING,
+    },
 },
     {
         hooks: {

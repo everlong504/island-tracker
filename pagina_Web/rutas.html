@@ -39,9 +39,14 @@
             </h5>
 
             <div class="sidebar-menu">
-                <a href="index.html" id="logout" style="margin: 20px">
+                <a href="index.html" id="logout" style="">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>Salir de sesión</span>
+                </a>
+
+                <a href="perfil.html" id="perfil" style="margin: 20px">
+                    <i class="bi bi-person"></i>
+                    <span>Perfil</span>
                 </a>
             </div>
         </div>
@@ -117,6 +122,22 @@
         var cerror;
         const token = localStorage.getItem('token');
 
+        var permisos = '';
+
+        $.ajax({
+            url: '/api/me',
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + token },
+            success: function (user) {
+                console.log(user.permisos);
+                permisos = user.permisos;
+                initTable();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al cargar perfil:', error);
+            }
+        });
+
         $(document).ready(function () {
             table = new Tabulator("#myTable", {
                 ajaxURL: "/api/ruta",
@@ -141,6 +162,9 @@
                         field: "actions",
                         width: 120,
                         formatter: function () {
+                            if (permisos === 'Conductor') {
+                                return '';
+                            }
                             return '<button class="btn btn-sm btn-primary edit-btn">Edit</button>' +
                                 '<button class="btn btn-sm btn-primary delete-btn">Delete</button>';
                         },

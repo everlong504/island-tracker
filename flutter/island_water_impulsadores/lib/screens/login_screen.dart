@@ -16,10 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _obscureText = true;
-
-  String _response = 'Press a button to perform an HTTP request.';
-  bool _loading = false;
-
   bool _isLoading = false;
   String _snackMessage = '';
   bool _usuarioformError = false;
@@ -48,7 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
         if (responseData['success'] == true ||
             responseData.containsKey('token')) {
           setState(() {
-            var name = responseData['user']['email'];
+            var name = (responseData['user']['nombre']).split(' ')[0];
+
             _snackMessage = 'Buenos dias, $name';
           });
           return true;

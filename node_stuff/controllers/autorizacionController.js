@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id_users: user.id_users, email: user.email, permisos: user.permisos },
+            { id_users: user.id_users, email: user.email, permisos: user.permisos, nombre: user.nombre },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
@@ -38,8 +38,12 @@ exports.login = async (req, res) => {
         res.json({
             message: 'Login exitoso',
             token,
-            user: { id_users: user.id_users, email: user.email, permisos: user.permisos }
+            user: { id_users: user.id_users, email: user.email, permisos: user.permisos, nombre: user.nombre }
         });
+
+        user.last_login = new Date();
+        await user.save();
+
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -47,7 +51,9 @@ exports.login = async (req, res) => {
 
 exports.me = async (req, res) => {
     try {
-        const user = await User.findByPk(req.user.id, {
+        const userId = req.user.id_users || req.user.id;
+
+        const user = await User.findByPk(userId, {
             attributes: { exclude: ['password_hash'] }
         });
         if (!user) {
