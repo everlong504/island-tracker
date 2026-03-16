@@ -3,6 +3,10 @@ import 'package:island_water_impulsadores/screens/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = FlutterSecureStorage();
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -40,12 +44,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final Map<String, dynamic> responseData = jsonDecode(response.body);
 
+      await storage.write(key: 'jwt_token', value: responseData['token']);
+
       if (response.statusCode == 200) {
         if (responseData['success'] == true ||
             responseData.containsKey('token')) {
           setState(() {
             var name = (responseData['user']['nombre']).split(' ')[0];
-
             _snackMessage = 'Buenos dias, $name';
           });
           return true;
