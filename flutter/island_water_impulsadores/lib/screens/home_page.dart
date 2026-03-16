@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:island_water_impulsadores/screens/buscar_exhibidor_screen.dart';
+import 'package:island_water_impulsadores/screens/nuevo_exhibidor(test)_screen.dart';
 import 'package:island_water_impulsadores/screens/perfil_screen.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -111,6 +112,14 @@ class _HomePageState extends State<HomePage> {
 
                 child: ElevatedButton(
                   onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MapWidget(),
+                      ),
+                    );
+                    /*
+
                     showModalBottomSheet<void>(
                       context: context,
                       builder: (BuildContext context) {
@@ -169,16 +178,32 @@ class _HomePageState extends State<HomePage> {
 
                                 const SizedBox(height: 16),
 
+
                                 FlutterMap(
-                                  options: const MapOptions(),
-                                  children: [
+                                  options: MapOptions(
+                                    center: LatLng(51.509364, -0.128928),
+                                    zoom: 9.2
+                                  ),
+                                  nonRotatedChildren: [
+                                    RichAttributionWidget(
+                                      attributions: [
+                                        TextSourceAttribution(
+                                          'OpenStreetMap contributors',
+                                          onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright'))
+                                      ),
+                                    ],
+                                    )
+                                  ],
+                                  children:[
                                     TileLayer(
-                                      urlTemplate:
-                                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                                       userAgentPackageName: 'com.example.app',
                                     ),
                                   ],
-                                ),
+                                );
+
+                                const SizedBox(height: 16),
+
 
                                 SizedBox(
                                   width: double.infinity,
@@ -201,6 +226,7 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                     );
+*/
                   },
 
                   style: ElevatedButton.styleFrom(
