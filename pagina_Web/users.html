@@ -61,6 +61,15 @@
             <div class="row">
                 <div class="col-6">
                     <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <input type="text" id="nombre" placeholder="Nombre completo" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3">
                         <label class="form-label">Correo</label>
                     </div>
 
@@ -153,12 +162,13 @@
                 },
                 pagination: "local",
                 paginationSize: 10,
-                layout: "fitColumns",
+                layout: "fitData",
                 initialSort: [
                     { column: "id_users", dir: "asc" },
                 ],
                 columns: [
-                    { title: "ID", field: "id_users", width: 70 },
+                    { title: "ID", field: "id_users", width: 50 },
+                    { title: "Nombre", field: "nombre", sorter: "string" },
                     { title: "Correo", field: "email", sorter: "string" },
                     { title: "Permisos", field: "permisos", sorter: "string" },
                     {
@@ -197,6 +207,7 @@
         function openCrudModal(rowData) {
             $('#crudUserId').val(state == 'editar' ? rowData.id_users : '');
             console.log(rowData.id_users);
+            $('#nombre').val(state == 'editar' ? rowData.nombre : '');
             $('#email').val(state == 'editar' ? rowData.email : '');
             $('#permisos').val(state == 'editar' ? rowData.permisos : '');
             document.getElementById('is_active').checked = (state == 'editar' && rowData.is_active ? true : false);
@@ -212,7 +223,7 @@
         }
 
         function closeCrudModal() {
-            $('#crudUserId, #email, #permisos, #is_active, #password').val('');
+            $('#crudUserId, #nombre, #email, #permisos, #is_active, #password').val('');
             $('#modal-backdrop').hide();
             $('#crudModal').hide();
         }
@@ -269,8 +280,7 @@
         $('#crudModal').on('click', '#crudConfirmarBtn', function (e) {
             e.preventDefault();
             const data = {
-                id_users: $('#crudUserId').val(),
-                email: $('#email').val(),
+                id_users: $('#crudUserId').val(), nombre: $('#nombre').val(), email: $('#email').val(),
                 permisos: $('#permisos').val(),
                 is_active: $('#is_active').is(':checked'),
                 password_hash: $('#password').val(),
@@ -299,6 +309,7 @@
                 });
             } else if (state == 'crear') {
                 const createData = {
+                    nombre: $('#nombre').val(),
                     email: $('#email').val(),
                     permisos: $('#permisos').val(),
                     is_active: $('#is_active').is(':checked'),
