@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:island_water_impulsadores/screens/home_page.dart';
 import 'package:island_water_impulsadores/screens/perfil_screen.dart';
 
-class NuevoExhibidor extends StatefulWidget {
-  const NuevoExhibidor({super.key});
+class BuscarExhibidor extends StatefulWidget {
+  const BuscarExhibidor({super.key});
 
   @override
-  State<NuevoExhibidor> createState() => _NuevoExhibidorState();
+  State<BuscarExhibidor> createState() => _BuscarExhibidorState();
 }
 
-class _NuevoExhibidorState extends State<NuevoExhibidor> {
+class _BuscarExhibidorState extends State<BuscarExhibidor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +63,12 @@ class _NuevoExhibidorState extends State<NuevoExhibidor> {
             IconButton(
               tooltip: 'Home',
               icon: const Icon(Icons.home),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
               isSelected: true,
               hoverColor: DefaultSelectionStyle.defaultColor,
             ),
