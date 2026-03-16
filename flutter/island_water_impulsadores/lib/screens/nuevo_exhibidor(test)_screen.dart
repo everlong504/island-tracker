@@ -16,7 +16,6 @@ class MapWidget extends StatelessWidget {
         ),
       ),
       children: [
-        openStreetMapTileLater,
         // You can add other layers here (markers, polylines, etc.)
       ],
     );
